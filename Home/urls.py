@@ -7,5 +7,6 @@ urlpatterns = [
     path('signup',views.signup,name = "signup"),
     path('searchprof',views.Search_Prof,name = "searchprof"),
     path('ProfReview',views.Prof_review,name = "ProfReview"),
+    path('addProfessor',views.Add_Prof,name = "AddProf"),
 
 ]

@@ -2,6 +2,7 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 import pyrebase
+import uuid
 
 # Create your views here.
 
@@ -101,7 +102,7 @@ def Search_Prof(request):
         prof_list = []
 
         try:
-            data = database.child('Professors').get()  
+            data = database.child('test').get()  
             for id in data.each():  
                 professor = {}
                 name = id.val().get('Name')
@@ -117,12 +118,58 @@ def Search_Prof(request):
                     professor['Name'] = id.val().get('Name')
                     professor['School'] = id.val().get('School Name')
                     professor['difficulty'] = id.val().get('Difficulty')
-                    professor['rating'] = 4.5
-                    professor['noOfRatings'] = 15
-                    professor['dept'] = "cs"
+                    professor['rating'] = id.val().get('Rating')
+                    professor['noOfRatings'] = id.val().get('No of Ratings')
+                    professor['dept'] = id.val().get('Department')
                     prof_list.append(professor)
             return Response(prof_list)
         
         except Exception as e:
             print(e)
             return Response({'status': 'No Data Found'})
+
+@api_view(['POST'])
+def Add_Prof(request):
+    if request.method == 'POST':
+        profdata = request.data.get('professorData')
+        newProf = {str(uuid.uuid4()) :{
+                        "Name" : profdata['profFirstName']+profdata['profMiddleName']+profdata['profLastName'],
+                        "School Name": profdata['schoolName'],
+                        "School ID": str(uuid.uuid4()),
+                        "Department": profdata['department'],
+                        "No of Ratings" : 0,
+                        "Rating" : 0,
+                        "Difficulty": 0,
+                        "Reviews" : None,
+                        "Tags":{
+                            "Accessible Oustside Class": 0,
+                            "Amazing Lectures": 0,
+                            "Beware Of Pop Quizzes": 0,
+                            "Caring": 0,
+                            "Clear Grading Criteria": 0,
+                            "Extra Credit": 0,
+                            "Get Ready To Read": 0,
+                            "Gives Good Feesback": 0,
+                            "Graded By Few Things": 0,
+                            "Group Projects": 0,
+                            "Hilarious": 0,
+                            "Inspirational": 0,
+                            "Lecture Heavy": 0,
+                            "Lots Of Homework": 0,
+                            "Online Savvy": 0,
+                            "Respected": 0,
+                            "So Many Papers": 0,
+                            "Test Heavy": 0,
+                            "Tough Grader": 0,
+                            "participation Matters": 0
+                        }
+                        }
+                    }
+        try:
+            database.child('test').update(newProf)
+            print("Added")
+            return Response({"Message": "Professor Added Sucessfully"})
+        
+        except Exception as e:
+            print(e)
+            return Response({'Message': 'Fail To Add Professor'})
