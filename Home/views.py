@@ -132,7 +132,7 @@ def Search_Prof(request):
 def Add_Prof(request):
     if request.method == 'POST':
         profdata = request.data.get('professorData')
-        newProf = {str(uuid.uuid4()) :{
+        newProf = {"ABC" :{
                         "Name" : profdata['profFirstName']+profdata['profMiddleName']+profdata['profLastName'],
                         "School Name": profdata['schoolName'],
                         "School ID": str(uuid.uuid4()),
